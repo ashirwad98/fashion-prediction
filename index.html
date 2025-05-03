@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fashion Style Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('{{ url_for('static', filename='backgrounds/9701606.jpg') }}');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            padding: 40px 20px;
+            color: #fff;
+            backdrop-filter: blur(5px);
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.75);
+            padding: 40px;
+            max-width: 750px;
+            margin: auto;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #ffc107;
+        }
+
+        .upload-box {
+            padding: 30px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+
+        .upload-box:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .upload-box label {
+            display: inline-block;
+            margin-top: 10px;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .upload-box input[type="file"] {
+            display: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            background: #f8f9fa;
+            color: #333;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .result h2 {
+            color: #28a745;
+        }
+
+        .result ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .result li {
+            margin: 8px 0;
+        }
+
+        .error {
+            color: #ff4d4f;
+            margin-top: 20px;
+        }
+
+        img.preview {
+            margin-top: 20px;
+            max-width: 240px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .notice {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👗 Fashion Style Predictor</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="upload-box">
+                <label for="file-upload">📤 Click to Upload Fashion Sketch</label>
+                <input type="file" id="file-upload" name="file" accept="image/*" required>
+            </div>
+            <button type="submit">Predict</button>
+        </form>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if image_url %}
+            <h3>🖼️ Uploaded Image:</h3>
+            <img src="{{ image_url }}" alt="Uploaded Image" class="preview">
+        {% endif %}
+
+        {% if processed_url %}
+            <h3>🧪 Processed Image (Used for Prediction):</h3>
+            <img src="{{ processed_url }}" alt="Processed Image" class="preview">
+        {% endif %}
+
+        <div class="notice">
+            ⚠️ Note: This model is trained on grayscale sketches (Fashion MNIST). Real-world photos may reduce accuracy.
+        </div>
+
+        {% if prediction %}
+            <div class="result">
+                <h2>👕 Predicted Style: {{ prediction }}</h2>
+                <p>Suggested Wearables:</p>
+                <ul>
+                    {% for item in matches %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
